@@ -2,6 +2,7 @@
 
 require_once "models/Images.php";
 
+
 $image = new Images();
 
 $imageSize = $_FILES['profileImage']['size'];
@@ -15,7 +16,7 @@ if (!$image->isValidExtension($imageType)) {
 }
 
 list($width, $height) = getimagesize($_FILES['profileImage']['tmp_name']);
-if (!$image->isValidProportions($width, $height)) {
+if (!$image->isValidProportion($width, $height)) {
     die("Slika je preširoka ili previsoka!");
 }
 
@@ -73,7 +74,7 @@ if (!is_dir('./uploads')) {
     mkdir('./uploads', 0755, true);
 }
 
-// PREMJEŠTANJE IZ TMP U UPLOADS
+// PREMJESTANJE IZ TMP U UPLOADS
 $imageUploaded = move_uploaded_file($tmpFileName, $finalPath);
 
 if ($imageUploaded) {

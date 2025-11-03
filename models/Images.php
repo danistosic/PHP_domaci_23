@@ -18,34 +18,24 @@ class Images extends DB
         $this->connection->query(query: "INSERT INTO images (image) VALUES ('$finalName')");
     }
 
-      public function isValidProportions($width, $height)
+    public function isValidProportion(int $width, int $height): bool
     {
-        if ($width > self::MAX_IMAGE_WIDTH || $height > self::MAX_IMAGE_HEIGHT) {
-            return false;
-        }
-
-        return true;
+    return $width <= self::MAX_IMAGE_WIDTH && $height <= self::MAX_IMAGE_HEIGHT;
     }
 
-      public function isValidExtension($extension)
+    public function isValidExtension(string $extension): bool
     {
-        if (!in_array($extension, haystack: self::ALLOWED_EXTENSIONS)) {
-            return false;
-        }
-
-        return true;
+    return in_array($extension, haystack:self::ALLOWED_EXTENSIONS);
     }
 
-    public function isValidSize($size)
+    public function isValidSize(int $size): bool
     {
-        if($size > self::MAX_FILE_SIZE) {
-            return false;
-        }
-        return true;
+    return $size <= self::MAX_FILE_SIZE;
     }
 
-    public function generateRandomName($extension)
+    public function generateRandomName(string $extension): string
     {
-        return uniqid().".".$extension;
+    return uniqid() . "." . $extension;
     }
+
 }
