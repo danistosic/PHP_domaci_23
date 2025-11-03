@@ -1,4 +1,35 @@
-<?php
+<?php 
+
+require_once "models/Images.php";
+
+$image = new Images();
+
+$imageSize = $_FILES['profileImage']['size'];
+if (!$image->isValidSize($imageSize)) {
+    die("Slika je prevelika!");
+}
+
+$imageType = pathinfo($_FILES['profileImage']['name'], flags: PATHINFO_EXTENSION);
+if (!$image->isValidExtension($imageType)) {
+    die("Nije dobra extenzija slike");
+}
+
+list($width, $height) = getimagesize($_FILES['profileImage']['tmp_name']);
+if (!$image->isValidProportions($width, $height)) {
+    die("Slika je preširoka ili previsoka!");
+}
+
+
+$randomName = $image->generateRandomName(extension: 'jpg');
+if (!is_dir('./uploads')) {
+    mkdir('./uploads', 0755, true);
+}
+$image->upload($_FILES['profileImage']['tmp_name'], $randomName, destination: "uploads");
+
+exit();
+
+// Povezivanje s bazom
+$connection = mysqli_connect("localhost", "root", "", "php23");
 
 if (!isset($_FILES['profileImage'])) {
     die("Niste proslijedili profilnu sliku!");
@@ -46,9 +77,14 @@ if (!is_dir('./uploads')) {
 $imageUploaded = move_uploaded_file($tmpFileName, $finalPath);
 
 if ($imageUploaded) {
-    die("✅ Uspješno ste dodali sliku.");
+    // Sprema ime slike u bazu
+    $imageName = $connection->real_escape_string($imageName);
+    $query = "INSERT INTO images (image) VALUES ('$imageName')";
+    $connection->query($query);
+
+    die("✅ Uspješno ste dodali sliku!");
 } else {
-    die("⚠️ Neuspješno uploadovanje slike.");
+    die("⚠️ Neuspješno uploadovanje slike!");
 }
 
 echo "✅ Slika je dobra, možeš nastaviti s uploadom!";
