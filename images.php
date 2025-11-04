@@ -1,26 +1,39 @@
-<?php
+<?php require_once "models/Images.php"; $img = new Images(); 
 
-require_once "models/DB.php";
-
-$db = new DB();
-
-
-$connection = mysqli_connect(hostname: "localhost", username: "root", password: "", database: "php23");
-
-$data = $connection->query(query: "SELECT * FROM images");
+if (session_status() === PHP_SESSION_NONE) {
+    session_start();
+}
 
 ?>
 
-<html>
 
+<!DOCTYPE html>
+<html lang="en">
 <head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Uploaded Images</title>
+    <link rel="stylesheet" href="style.css">
 </head>
-
 <body>
-    <?php foreach($data as $image): ?>
-        <img width="100px" height="auto" src="uploads/<?= $image['image'] ?>" />
-    <?php endforeach; ?>
-</body>
+    <h1>Uploaded Images</h1>
 
+     <?php if (isset($_SESSION['imageErrors']) && !empty($_SESSION['imageErrors'])): ?>
+        <div class="errors">
+            <?php foreach ($_SESSION['imageErrors'] as $error): ?>
+                <p><?= htmlspecialchars($error) ?></p>
+            <?php endforeach; ?>
+        </div>
+        <?php unset($_SESSION['imageErrors']); ?>
+    <?php endif; ?>
+
+    <div class="gallery">
+        <?php foreach($img->getAllImages() as $image): ?>
+            <img src="uploads/<?= htmlspecialchars($image['image']) ?>" alt="Uploaded image">
+        <?php endforeach; ?>
+    </div>
+</body>
 </html>
+
+
 

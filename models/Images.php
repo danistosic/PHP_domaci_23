@@ -4,7 +4,7 @@ require_once "DB.php";
 
 class Images extends DB
 {
-    const ALLOWED_EXTENSIONS = ["jpg", "jpeg", "png", "gif"];
+    const ALLOWED_EXTENSIONS = ["jpg", "jpeg", "png", "gif", "avif"];
     const MAX_FILE_SIZE = 5 * 1024 * 1024;
     const MAX_IMAGE_WIDTH = 1920;
     const MAX_IMAGE_HEIGHT = 1024;
@@ -37,5 +37,11 @@ class Images extends DB
     {
     return uniqid() . "." . $extension;
     }
+
+    public function getAllImages(): object
+    {
+    return $this->connection->query("SELECT * FROM images");
+    }
+
 
 }
